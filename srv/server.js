@@ -1,3 +1,5 @@
+require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
+
 const express = require('express');
 const dgram = require('dgram');
 const os = require('os');
