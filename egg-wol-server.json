@@ -13,7 +13,7 @@
     "node:alpine": "node:25-alpine"
   },
   "file_denylist": [],
-  "startup": "/bin/bash -c 'node start.js'",
+  "startup": "if [ -f /home/container/start.js ]; then /usr/local/bin/node /home/container/start.js; else echo 'Erreur: start.js introuvable!'; exit 1; fi",
   "config": {
     "files": "{}",
     "startup": "{\n    \"done\": \"listening|started|démarré|Installation\"\n}",
