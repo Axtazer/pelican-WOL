@@ -1,16 +1,16 @@
 {
-  "_comment": "Pterodactyl Egg pour serveur Wake-on-LAN avec auto-détection",
+  "_comment": "Pterodactyl Egg pour serveur Wake-on-LAN",
   "meta": {
     "version": "PTDL_v2",
-    "update_url": null
+    "update_url": "https://github.com/Axtazer/pelican-WOL/blob/main/egg-wol-server.json"
   },
   "exported_at": "2025-11-24T12:00:00+00:00",
-  "name": "Wake-on-LAN Server (Auto-Setup)",
+  "name": "Wake-on-LAN Server",
   "author": "axtazer@github.com",
   "description": "Serveur Node.js WOL avec auto-détection des interfaces réseau",
   "features": null,
   "docker_images": {
-    "node:18": "node:18-alpine"
+    "node:current-trixie": "node:current-trixie"
   },
   "file_denylist": [],
   "startup": "npm start",
@@ -18,12 +18,12 @@
     "files": "{}",
     "startup": "{\n    \"done\": \"Serveur Wake-on-LAN démarré\"\n}",
     "logs": "{}",
-    "stop": "^C"
+    "stop": "npm stop"
   },
   "scripts": {
     "installation": {
       "script": "#!/bin/ash\n\napk add --no-cache git curl jq\n\nmkdir -p /mnt/server\ncd /mnt/server\n\necho \"📦 Installation du serveur WOL avec auto-setup...\"\n\n# Télécharger les fichiers depuis un repo ou créer sur place\nif [ ! -f package.json ]; then\n    cat > package.json <<'EOF'\n{\n  \"name\": \"wol-server-auto\",\n  \"version\": \"2.0.0\",\n  \"description\": \"Serveur WOL avec auto-détection\",\n  \"main\": \"server.js\",\n  \"scripts\": {\n    \"start\": \"node server.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\"\n  }\n}\nEOF\nfi\n\necho \"📥 Installation des dépendances...\"\nnpm install\n\necho \"✅ Installation terminée!\"",
-      "container": "node:18-alpine",
+      "container": "node:current-trixie",
       "entrypoint": "ash"
     }
   },

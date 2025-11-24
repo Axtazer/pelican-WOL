@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:current-trixie
 
 # Installation des outils réseau pour debugging
 RUN apk add --no-cache iproute2 net-tools
