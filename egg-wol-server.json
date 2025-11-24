@@ -10,20 +10,20 @@
   "description": "Serveur Node.js WOL avec auto-détection des interfaces réseau",
   "features": null,
   "docker_images": {
-    "node:current-trixie": "node:current-trixie"
+    "node:alpine": "node:alpine"
   },
   "file_denylist": [],
-  "startup": "npm start",
+  "startup": "node start.js",
   "config": {
     "files": "{}",
     "startup": "{\n    \"done\": \"Serveur Wake-on-LAN démarré\"\n}",
     "logs": "{}",
-    "stop": "npm stop"
+    "stop": "^D"
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/sh\n\nset -e\n# Utiliser apt sur les images Debian-based\napt-get update || true\napt-get install -y git curl jq || true\nmkdir -p /mnt/server\ncd /mnt/server\n\necho \"📦 Récupération des fichiers depuis le dépôt GitHub...\"\n\nREPO_URL=\"https://github.com/Axtazer/pelican-WOL.git\"\n\nif [ -d .git ]; then\n  echo \"🔄 Dépôt déjà présent, pull...\"\n  git fetch --all --depth=1 || true\n  git reset --hard origin/HEAD || true\nelse\n  git clone --depth 1 \"$REPO_URL\" .\nfi\n\n# supprimer l'historique pour alléger\nrm -rf .git || true\n\n# installer les dépendances si package.json présent\nif [ -f package.json ]; then\n  echo \"📥 Installation des dépendances (npm ci si possible)...\"\n  if [ -f package-lock.json ]; then\n    npm ci --only=production || npm install --only=production\n  else\n    npm install --only=production\n  fi\nelse\n  echo \"⚠️ package.json introuvable dans le dépôt. Aucune dépendance installée.\"\nfi\n\necho \"✅ Installation terminée!\"\n",
-      "container": "node:current-trixie",
+      "script": "#!/bin/sh\n\nset -e\n# Alpine utilise apk au lieu d'apt\napk add --no-cache git curl jq\n\necho \"🗑️ Nettoyage du répertoire d'installation...\"\ncd /mnt/server\nfind . -mindepth 1 -maxdepth 1 ! -name '.pterodactyl' -exec rm -rf {} + || true\n\necho \"📦 Récupération des fichiers depuis le dépôt GitHub...\"\n\nREPO_URL=\"https://github.com/Axtazer/pelican-WOL.git\"\ngit clone --depth 1 \"$REPO_URL\" .\n\nrm -rf .git || true\n\nif [ -f package.json ]; then\n  echo \"📥 Installation des dépendances...\"\n  if [ -f package-lock.json ]; then\n    npm ci --only=production || npm install --only=production\n  else\n    npm install --only=production\n  fi\nelse\n  echo \"⚠️ package.json introuvable.\"\nfi\n\necho \"✅ Installation terminée!\"\n",
+      "container": "node:alpine",
       "entrypoint": "/bin/sh"
     }
   },
@@ -31,7 +31,7 @@
     {
       "name": "Server Port",
       "description": "Port d'écoute du serveur",
-      "env_variable": "SERVER_PORT",
+      "env_variable": "SERVER_PORT",  
       "default_value": "3000",
       "user_viewable": true,
       "user_editable": true,
