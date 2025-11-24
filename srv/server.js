@@ -7,7 +7,7 @@ const app = express();
 
 // Configuration depuis les variables d'environnement
 const SERVER_PORT = parseInt(process.env.SERVER_PORT) || 3000;
-const SERVER_IP = process.env.SERVER_IP || '0.0.0.0';
+const SERVER_IP = '0.0.0.0'; // TOUJOURS 0.0.0.0 dans un conteneur
 const WOL_PORT = parseInt(process.env.WOL_PORT) || 9;
 const API_KEY = process.env.API_KEY || '';
 
@@ -64,28 +64,25 @@ class NetworkConfig {
 
     // Détermine si c'est une interface Docker
     isDockerInterface(name, ip) {
-        // Patterns typiques Docker
+        // Dans un conteneur Pterodactyl, l'interface principale n'est PAS Docker
+        // Docker utilise des bridges comme docker0, br-xxx, veth
         const dockerPatterns = [
-            /^docker\d*/,
-            /^br-[a-f0-9]{12}/,
-            /^veth[a-f0-9]+/
+            /^docker\d+$/,
+            /^br-[a-f0-9]{12}$/,
+            /^veth[a-f0-9]+$/
         ];
 
-        // Vérifier le nom
-        if (dockerPatterns.some(pattern => pattern.test(name))) {
-            return true;
-        }
-
-        // Vérifier le réseau (Docker utilise souvent 172.17.0.0/16)
-        if (DOCKER_NETWORK_PREFIX && ip.startsWith(DOCKER_NETWORK_PREFIX)) {
-            return true;
-        }
-
-        return false;
+        // Vérifier uniquement le nom pour les patterns Docker
+        return dockerPatterns.some(pattern => pattern.test(name));
     }
 
     // Détermine si c'est une interface locale
     isLocalInterface(name, ip) {
+        // Dans un conteneur, eth0 est l'interface principale
+        if (name === 'eth0') {
+            return true;
+        }
+
         // Si un préfixe est spécifié, l'utiliser
         if (LOCAL_NETWORK_PREFIX && ip.startsWith(LOCAL_NETWORK_PREFIX)) {
             return true;
