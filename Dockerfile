@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --only=production
 
-COPY server.js ./
+COPY src/ ./src/
 
 # Utilisateur non-root pour la sécurité
 RUN addgroup -g 1000 wol && \
@@ -19,4 +19,4 @@ USER wol
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["node", "src/server.js"]
