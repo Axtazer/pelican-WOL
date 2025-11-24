@@ -10,10 +10,10 @@
   "description": "Serveur Node.js WOL avec auto-détection des interfaces réseau",
   "features": null,
   "docker_images": {
-    "node:alpine": "node:25-alpine"
+    "ghcr.io/pelican-eggs/yolks:nodejs_25": "ghcr.io/pelican-eggs/yolks:nodejs_25"
   },
   "file_denylist": [],
-  "startup": "if [ -f /home/container/start.js ]; then /usr/local/bin/node /home/container/start.js; else echo 'Erreur: start.js introuvable!'; exit 1; fi",
+  "startup": "/usr/local/bin/node /home/container/start.js",
   "config": {
     "files": "{}",
     "startup": "{\n    \"done\": \"listening|started|démarré|Installation\"\n}",
@@ -22,8 +22,8 @@
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/ash\n\nset -e\n# Alpine utilise apk au lieu d'apt\napk add --no-cache git curl jq bash\n\necho \"🗑️ Nettoyage du répertoire d'installation...\"\ncd /mnt/server\nfind . -mindepth 1 -maxdepth 1 ! -name '.pterodactyl' -exec rm -rf {} + || true\n\necho \"📦 Récupération des fichiers depuis le dépôt GitHub...\"\n\nREPO_URL=\"https://github.com/Axtazer/pelican-WOL.git\"\ngit clone --depth 1 \"$REPO_URL\" .\n\nrm -rf .git || true\n\nif [ -f package.json ]; then\n  echo \"📥 Installation des dépendances...\"\n  if [ -f package-lock.json ]; then\n    npm ci --only=production || npm install --only=production\n  else\n    npm install --only=production\n  fi\nelse\n  echo \"⚠️ package.json introuvable.\"\nfi\n\necho \"✅ Installation terminée!\"\n",
-      "container": "node:25-alpine",
+      "script": "#!/bin/ash\n\nset -e\n# Alpine utilise apk au lieu d'apt\napk add --no-cache git curl jq\n\necho \"🗑️ Nettoyage du répertoire d'installation...\"\ncd /mnt/server\nfind . -mindepth 1 -maxdepth 1 ! -name '.pterodactyl' -exec rm -rf {} + || true\n\necho \"📦 Récupération des fichiers depuis le dépôt GitHub...\"\n\nREPO_URL=\"https://github.com/Axtazer/pelican-WOL.git\"\ngit clone --depth 1 \"$REPO_URL\" .\n\nrm -rf .git || true\n\nif [ -f package.json ]; then\n  echo \"📥 Installation des dépendances...\"\n  if [ -f package-lock.json ]; then\n    npm ci --only=production || npm install --only=production\n  else\n    npm install --only=production\n  fi\nelse\n  echo \"⚠️ package.json introuvable.\"\nfi\n\necho \"✅ Installation terminée!\"\n",
+      "container": "ghcr.io/pelican-eggs/yolks:nodejs_25",
       "entrypoint": "ash"
     }
   },
