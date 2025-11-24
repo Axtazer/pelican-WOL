@@ -22,7 +22,7 @@
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/ash\n\napk add --no-cache git curl jq\n\nmkdir -p /mnt/server\ncd /mnt/server\n\necho \"📦 Installation du serveur WOL avec auto-setup...\"\n\n# Télécharger les fichiers depuis un repo ou créer sur place\nif [ ! -f package.json ]; then\n    cat > package.json <<'EOF'\n{\n  \"name\": \"wol-server-auto\",\n  \"version\": \"2.0.0\",\n  \"description\": \"Serveur WOL avec auto-détection\",\n  \"main\": \"server.js\",\n  \"scripts\": {\n    \"start\": \"node server.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\"\n  }\n}\nEOF\nfi\n\necho \"📥 Installation des dépendances...\"\nnpm install\n\necho \"✅ Installation terminée!\"",
+      "script": "#!/bin/ash\n\napk add --no-cache git curl jq\n\nmkdir -p /mnt/server\ncd /mnt/server\n\necho \"📦 Installation du serveur WOL avec auto-setup...\"\n\n# Télécharger les fichiers depuis un repo ou créer sur place\nif [ ! -f package.json ]; then\n    cat > package.json <<'EOF'\n{\n  \"name\": \"wol-server-auto\",\n  \"version\": \"2.0.0\",\n  \"description\": \"Serveur WOL avec auto-détection\",\n  \"main\": \"src/server.js\",\n  \"scripts\": {\n    \"start\": \"node src/server.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\"\n  }\n}\nEOF\nfi\n\necho \"📥 Installation des dépendances...\"\nnpm install\n\necho \"✅ Installation terminée!\"",
       "container": "node:18-alpine",
       "entrypoint": "ash"
     }
