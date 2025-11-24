@@ -7,7 +7,7 @@ const app = express();
 
 // Configuration depuis les variables d'environnement
 const SERVER_PORT = parseInt(process.env.SERVER_PORT) || 3000;
-const SERVER_IP = '0.0.0.0'; // TOUJOURS 0.0.0.0 dans un conteneur
+const SERVER_IP = process.env.SERVER_IP || '0.0.0.0'; // Utiliser l'IP du port principal Pterodactyl
 const WOL_PORT = parseInt(process.env.WOL_PORT) || 9;
 const API_KEY = process.env.API_KEY || '';
 
