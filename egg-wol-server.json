@@ -10,21 +10,21 @@
   "description": "Serveur Node.js WOL avec auto-détection des interfaces réseau",
   "features": null,
   "docker_images": {
-    "node:alpine": "node:alpine"
+    "node:alpine": "node:25-alpine"
   },
   "file_denylist": [],
-  "startup": "node start.js",
+  "startup": "/bin/bash -c 'node start.js'",
   "config": {
     "files": "{}",
-    "startup": "{\n    \"done\": \"Serveur Wake-on-LAN démarré\"\n}",
+    "startup": "{\n    \"done\": \"listening|started|démarré|Installation\"\n}",
     "logs": "{}",
-    "stop": "^D"
+    "stop": "^C"
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/sh\n\nset -e\n# Alpine utilise apk au lieu d'apt\napk add --no-cache git curl jq\n\necho \"🗑️ Nettoyage du répertoire d'installation...\"\ncd /mnt/server\nfind . -mindepth 1 -maxdepth 1 ! -name '.pterodactyl' -exec rm -rf {} + || true\n\necho \"📦 Récupération des fichiers depuis le dépôt GitHub...\"\n\nREPO_URL=\"https://github.com/Axtazer/pelican-WOL.git\"\ngit clone --depth 1 \"$REPO_URL\" .\n\nrm -rf .git || true\n\nif [ -f package.json ]; then\n  echo \"📥 Installation des dépendances...\"\n  if [ -f package-lock.json ]; then\n    npm ci --only=production || npm install --only=production\n  else\n    npm install --only=production\n  fi\nelse\n  echo \"⚠️ package.json introuvable.\"\nfi\n\necho \"✅ Installation terminée!\"\n",
-      "container": "node:alpine",
-      "entrypoint": "/bin/sh"
+      "script": "#!/bin/ash\n\nset -e\n# Alpine utilise apk au lieu d'apt\napk add --no-cache git curl jq bash\n\necho \"🗑️ Nettoyage du répertoire d'installation...\"\ncd /mnt/server\nfind . -mindepth 1 -maxdepth 1 ! -name '.pterodactyl' -exec rm -rf {} + || true\n\necho \"📦 Récupération des fichiers depuis le dépôt GitHub...\"\n\nREPO_URL=\"https://github.com/Axtazer/pelican-WOL.git\"\ngit clone --depth 1 \"$REPO_URL\" .\n\nrm -rf .git || true\n\nif [ -f package.json ]; then\n  echo \"📥 Installation des dépendances...\"\n  if [ -f package-lock.json ]; then\n    npm ci --only=production || npm install --only=production\n  else\n    npm install --only=production\n  fi\nelse\n  echo \"⚠️ package.json introuvable.\"\nfi\n\necho \"✅ Installation terminée!\"\n",
+      "container": "node:25-alpine",
+      "entrypoint": "ash"
     }
   },
   "variables": [
