@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  wol-server:
+    build: .
+    container_name: wol-server
+    network_mode: host
+    environment:
+      - SERVER_PORT=3000
+      - SERVER_IP=0.0.0.0
+      - LOCAL_INTERFACE=eth0
+      - DOCKER_INTERFACE=docker0
+      - WOL_PORT=9
+      - API_KEY=votre-cle-secrete-ici
+    restart: unless-stopped
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN

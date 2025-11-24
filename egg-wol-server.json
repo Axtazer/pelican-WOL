@@ -1,0 +1,122 @@
+{
+  "_comment": "Pterodactyl Egg pour serveur Wake-on-LAN avec auto-détection",
+  "meta": {
+    "version": "PTDL_v2",
+    "update_url": null
+  },
+  "exported_at": "2025-11-24T12:00:00+00:00",
+  "name": "Wake-on-LAN Server (Auto-Setup)",
+  "author": "axtazer@github.com",
+  "description": "Serveur Node.js WOL avec auto-détection des interfaces réseau",
+  "features": null,
+  "docker_images": {
+    "node:18": "node:18-alpine"
+  },
+  "file_denylist": [],
+  "startup": "npm start",
+  "config": {
+    "files": "{}",
+    "startup": "{\n    \"done\": \"Serveur Wake-on-LAN démarré\"\n}",
+    "logs": "{}",
+    "stop": "^C"
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/ash\n\napk add --no-cache git curl jq\n\nmkdir -p /mnt/server\ncd /mnt/server\n\necho \"📦 Installation du serveur WOL avec auto-setup...\"\n\n# Télécharger les fichiers depuis un repo ou créer sur place\nif [ ! -f package.json ]; then\n    cat > package.json <<'EOF'\n{\n  \"name\": \"wol-server-auto\",\n  \"version\": \"2.0.0\",\n  \"description\": \"Serveur WOL avec auto-détection\",\n  \"main\": \"server.js\",\n  \"scripts\": {\n    \"start\": \"node server.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\"\n  }\n}\nEOF\nfi\n\necho \"📥 Installation des dépendances...\"\nnpm install\n\necho \"✅ Installation terminée!\"",
+      "container": "node:18-alpine",
+      "entrypoint": "ash"
+    }
+  },
+  "variables": [
+    {
+      "name": "Server Port",
+      "description": "Port d'écoute du serveur",
+      "env_variable": "SERVER_PORT",
+      "default_value": "3000",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|integer|between:1024,65535",
+      "field_type": "text"
+    },
+    {
+      "name": "Auto-Detect",
+      "description": "Activer l'auto-détection des interfaces (true/false)",
+      "env_variable": "AUTO_DETECT",
+      "default_value": "true",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|in:true,false",
+      "field_type": "text"
+    },
+    {
+      "name": "Local Interface (optionnel)",
+      "description": "Nom de l'interface locale (laissez vide pour auto-détection)",
+      "env_variable": "LOCAL_INTERFACE",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:20",
+      "field_type": "text"
+    },
+    {
+      "name": "Docker Interface (optionnel)",
+      "description": "Nom de l'interface Docker (laissez vide pour auto-détection)",
+      "env_variable": "DOCKER_INTERFACE",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:20",
+      "field_type": "text"
+    },
+    {
+      "name": "Local Network Prefix",
+      "description": "Préfixe du réseau local pour l'auto-détection (ex: 192.168)",
+      "env_variable": "LOCAL_NETWORK_PREFIX",
+      "default_value": "192.168",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:15",
+      "field_type": "text"
+    },
+    {
+      "name": "Docker Network Prefix",
+      "description": "Préfixe du réseau Docker (généralement 172)",
+      "env_variable": "DOCKER_NETWORK_PREFIX",
+      "default_value": "172",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:15",
+      "field_type": "text"
+    },
+    {
+      "name": "Exclude Interfaces",
+      "description": "Interfaces à exclure (séparées par des virgules)",
+      "env_variable": "EXCLUDE_INTERFACES",
+      "default_value": "lo",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string",
+      "field_type": "text"
+    },
+    {
+      "name": "WOL Port",
+      "description": "Port UDP pour Wake-on-LAN",
+      "env_variable": "WOL_PORT",
+      "default_value": "9",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|integer|between:1,65535",
+      "field_type": "text"
+    },
+    {
+      "name": "API Key",
+      "description": "Clé API pour sécuriser les endpoints",
+      "env_variable": "API_KEY",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:256",
+      "field_type": "text"
+    }
+  ]
+}
