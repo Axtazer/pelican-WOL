@@ -13,7 +13,7 @@
     "ghcr.io/pelican-eggs/yolks:nodejs_25": "ghcr.io/pelican-eggs/yolks:nodejs_25"
   },
   "file_denylist": [],
-  "startup": "/usr/local/bin/node /home/container/start.js",
+  "startup": "if [[ -d .git ]] && [[ {{AUTO_UPDATE}} == \"1\" ]]; then git pull; fi; if [ -f /home/container/package.json ]; then /usr/local/bin/npm install --only=production; fi; /usr/local/bin/node /home/container/start.js",
   "config": {
     "files": "{}",
     "startup": "{\n    \"done\": \"listening|started|démarré|Installation\"\n}",
@@ -116,6 +116,16 @@
       "user_viewable": true,
       "user_editable": true,
       "rules": "nullable|string|max:256",
+      "field_type": "text"
+    },
+    {
+      "name": "Auto Update",
+      "description": "Mettre à jour automatiquement depuis Git au démarrage",
+      "env_variable": "AUTO_UPDATE",
+      "default_value": "0",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|in:0,1",
       "field_type": "text"
     }
   ]
